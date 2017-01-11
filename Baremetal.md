@@ -1,6 +1,13 @@
 #OpenStack 
 
-[TOC]
+##overview
+* [Baremetal Environment](#Baremetal Environment)
+* [Minimum System Requirements](#Minimum System Requirements)
+* [Preparing the Baremetal Environment](#Preparing the Baremetal Environment)
+* [Setting Up The Undercloud Machine](#Setting Up The Undercloud Machine)
+* [Undercloud Networking Setup](# Undercloud Networking Setup)
+* [Validations](#Validations)
+* [Configuration Files](#Configuration Files)
 
 ## Baremetal Environment
 ## Minimum System Requirements
@@ -35,8 +42,73 @@
 
 1. 选一台裸机安装undercloud
 2. 安装64位的RHEL 7.1 或者 CentOS 7
-3. 如果需要，创建一个none-
+3. 如果需要，创建一个none-root 账户，并设置免密。
+
+## Undercloud Networking Setup
+1. 虚拟机添加bridge网卡 Inter I350 & Inter 82599 #2
+2. 安装虚拟机Centos7 x86_64 minimal 最小安装版，默认管理员账户为stack，双网卡对应顺序为en0ps3,en0ps8
+3. `sudo vi /etc/sysconfig/network-scripts/ifcfg-en0ps3`
+4. 修改部分包括： 
+```
+BOOTPOROT=staic
+ONBOOT=yes
+IPADDR=192.168.100.92
+NETMASK=255.255.255.0
+GATEWAY=192.168.100.101
+DNS=202.118.224.100
+```
+5. `sudo vi /etc/resolv.conf` : 
+添加 `nameserver 114.114.114.114 \n nameserver 202.118.224.100`
+6. `sudo ifdown en0ps3` & `sudo ifup en0ps3`
+7. 对en0ps8重复3，4，6操作，注意IP及GATEWAY等参数对应修改。
 
 ## Validations
 
+```
+ sudo yum install ansible
+ git clone https://git.openstack.org/openstack/tripleo-validations
+ cd tripleo-validations
+ export UNDERCLOUD_HOST=ip or hostname
+ printf "[undercloud]\n$UNDERCLOUD_HOST" > hosts
+ grep -l '^\s\+-\s\+prep' -r validations
+```
+上一步会打印出一系列文件名，下一步依次每个单独运行即可（下面的xxx.yaml）
+```
+ansible-playbook -i hosts validations/xxx.yaml
+```
+
+## Configuration Files
+
+cpu : `cat /proc/cpuinfo | grep "processor" | wc -l`
+
+
+
+
+
+
+
+## Undercloud 
+
+### Repo
+> 更新为阿里源，国外源无法下载
+
+Repo of Aliyuan
+```
+yum clean all
+rm -rf /etc/yum.repos.d/*.repo
+wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo
+```
+添加ceph
+vi /etc/ceph.repo
+```
+[ceph]
+name=ceph
+baseurl=http://mirrors.aliyun.com/ceph/rpm-jewel/el7/x86_64/
+gpgcheck=0
+[ceph-noarch]
+name=cephnoarch
+baseurl=http://mirrors.aliyun.com/ceph/rpm-jewel/el7/noarch/
+gpgcheck=0
+```
 
