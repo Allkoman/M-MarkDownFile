@@ -6,7 +6,8 @@
   2、Storage(存储网络)：存储网络，顾名思义也就是专门给存储使用的私网。我喜欢使用Ceph当做NOVA、Cinder和Glance的统一存储，简单、共享。那此时这个存储网络就是相当于Ceph的Cluster Network，用于数据第二、三副本的同步和内部rebalance。其实这个网络的流量还是很大的，特别是存储节点越多，读取IO高的情况下。
 
 
-  3、Public(公网)：这里其实包含两个网络，Public网络和Floating IP网络。初次部署这两个网络必须在同一个网段，部署完成后可以手动添加额外的Floating IP网段，此时注意和交换机互联的端口需要设置成Trunk（trunk一般是打tag标记的,一般只允许打了该tag标记的vlan 通过,所以该端口可以允许多个打tag标记的vlan 通过,而access端口一般是untag不打标记的端口,而且一个access vlan端口只允许一个access vlan通过。）了。Public主要是用于外部访问，一是外部用户管理物理机需要通过Public网络访问，先到controller节点，然后跳转到计算节点，当然也可以手动给计算和存储节点配置Public IP。二是网络节点是在controller节点上面的，也就是常说的neutron L3,如果虚机分配了Floating IP需要访问外部网络，例如公司或者互联网，或者外部网络通过Floating IP访问虚拟机。我们知道Floating IP是要到网络节点，也就是控制节点的neutron l3做DNAT出去
+  3、Public(公网)：这里其实包含两个网络，Public网络和Floating 
+   IP网段，此时注意和交换机互联的端口需要设置成Trunk（trunk一般是打tag标记的,一般只允许打了该tag标记的vlan 通过,所以该端口可以允许多个打tag标记的vlan 通过,而access端口一般是untag不打标记的端口,而且一个access vlan端口只允许一个access vlan通过。）了。Public主要是用于外部访问，一是外部用户管理物理机需要通过Public网络访问，先到controller节点，然后跳转到计算节点，当然也可以手动给计算和存储节点配置Public IP。二是网络节点是在controller节点上面的，也就是常说的neutron L3,如果虚机分配了Floating IP需要访问外部网络，例如公司或者互联网，或者外部网络通过Floating IP访问虚拟机。我们知道Floating IP是要到网络节点，也就是控制节点的neutron l3做DNAT出去
 
 
    4、Private(私网)：这个网络主要是用于内部通信，比如云主机对外访问要先到controller节点，那Public又只在controller节点，那它是怎么到controller节点的呢，当然是通过Private网络。那部署的时候我们看到它默认有30个VLAN，也就是VLAN ID 1000-1030，这是做什么的呢。我们知道OpenStack可以有很多租户，每个租户都可以有自己的网络，那网络的子网在不同租户下可以相同，那问题来了，这是怎么实现的呢，怎么做的隔离呢。这就是这个VLAN的作用了，彼此之间使用的是VLAN做隔离，也就是每一个子网都使用一个VLAN来做隔离，保证不同租户之间的网络隔离和不冲突。这30个vlan可以建立30个子网，你可以根据实际的需求来变动。这个Private也是需要上行端口，也就是与交换机互联的端口是Trunk。

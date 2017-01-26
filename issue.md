@@ -1,13 +1,15 @@
 #Issue
 
 192.168.100.92:8443
+
 issue ：can't connect to Fuel Web
-support : 怀疑是端口未开放
+support : 怀疑是端口未开放，解决，更换镜像
+
 issue : can't ping baidu.com
-support : Edit /etc/sysconfig/network-scripts/ifcfg-eth0
+support : Edit /etc/sysconfig/network-scripts/ifcfg-eth0 && ifdown ifup
 
 issue : 安装firewall，开通8443端口依旧无法访问fuel web
-support : 待解决，2017.1.4 截止11.25网络无法使用
+support : 更换官方镜像
 
 issue ：蹭网，ip 219.217.238.205
 support : 尝试通过“隧道”解决8443端口未开放的问题
@@ -40,3 +42,7 @@ YouTube.com： fuel openstack installation
 
 2017.1.10
 安装openstack时会默认安装centos，随后进行nginx等服务的安装，在安装centos后会重启，重启切记不要不操作，会默认安装为10.20.0.2网络，并且，由于安装centos时ip10.20.0.2被占用，无法同时安装多台处于同一网络的机器进行测试。
+
+
+2017.1.17
+issue：Deployment has failed. All nodes are finished. Failed tasks: Task[netconfig/21], Task[netconfig/22], Task[netconfig/23] Stopping the deployment process! “网络有问题，4台节点机器中，controllers机器3台全部停止” 问题出现在netconfig

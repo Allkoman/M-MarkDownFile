@@ -82,14 +82,9 @@ ansible-playbook -i hosts validations/xxx.yaml
 cpu : `cat /proc/cpuinfo | grep "processor" | wc -l`
 
 
-
-
-
-
-
 ## Undercloud 
 
-### Repo
+###
 > 更新为阿里源，国外源无法下载
 
 Repo of Aliyuan
@@ -112,3 +107,12 @@ baseurl=http://mirrors.aliyun.com/ceph/rpm-jewel/el7/noarch/
 gpgcheck=0
 ```
 
+## 2016.1.17 物理机安装fuel-openstack记录
+
+    1. 192.168.100.67 ： 系统重定向 -> media -> 加载镜像 -> bios -> cdrom -> 安装
+    2. 
+
+
+
+##
+Error: Failed to perform requested operation on instance "test", the instance has an error status: Please try again later [Error: Exceeded maximum number of retries. Exceeded max scheduling attempts 3 for instance fd6142c0-0cb3-44aa-9ebf-f8bad00e82c6. Last exception: Binding failed for port 2ee32368-0e67-4898-9a9b-c3ada6557239, please check neutron logs for more information.]. 
